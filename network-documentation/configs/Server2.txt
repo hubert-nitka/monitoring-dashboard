@@ -1,0 +1,41 @@
+### /etc/dhcp/dhcpd.conf
+
+authoritative;
+default-lease-time 86400;
+max-lease-time 172800;
+
+failover peer "dhcp-ha" {
+  secondary;
+  address 192.168.68.2;
+  port 647;
+  peer address 192.168.68.1;
+  peer port 647;
+  max-response-delay 30;
+  max-unacked-updates 10;
+  load balance max seconds 3;
+}
+
+# VLAN 100 Servers
+subnet 192.168.68.0 netmask 255.255.255.0 {
+}
+
+# VLAN 20 HR
+subnet 192.168.70.0 netmask 255.255.255.128 {
+  pool {
+    failover peer "dhcp-ha";
+    range 192.168.70.10 192.168.70.120;
+  }
+  option routers 192.168.70.126;
+  option domain-name-servers 8.8.8.8;
+}
+
+# VLAN 40 Finance
+subnet 192.168.70.128 netmask 255.255.255.128 {
+  pool {
+    failover peer "dhcp-ha";
+    range 192.168.70.140 192.168.70.220;
+  }
+  option routers 192.168.70.254;
+  option domain-name-servers 8.8.8.8;
+}
+
