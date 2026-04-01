@@ -1,5 +1,22 @@
+"""
+Helper functions used by other modules
+"""
+from datetime import datetime, timezone
 from sqlalchemy import create_engine
 from config import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT
+
+def log(message, level="INFO", echo=False):
+    """
+    Write a timestamped message to the log file and optionally print it.
+    """
+
+    timestamp = datetime.now(timezone.utc)
+
+    with open(LOG_PATH, 'a', encoding='utf-8') as f:
+        f.write(f'{timestamp} UTC: [{level}] {message}\n')
+
+    if echo is True:
+        print(f'{timestamp} UTC: [{level}] {message}\n')
 
 def connect_to_database():
     """
