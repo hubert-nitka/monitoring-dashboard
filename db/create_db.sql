@@ -1,4 +1,5 @@
 CREATE TYPE status AS ENUM ('online', 'offline', 'unreachable', 'maintenance', 'decommissioned');
+CREATE TYPE priority AS ENUM ('critical', 'high', 'medium', 'low');
 
 CREATE  TABLE devices  (
 	id SERIAL PRIMARY KEY,
@@ -8,6 +9,7 @@ CREATE  TABLE devices  (
 	type_id INTEGER,
 	vendor_id INTEGER,
 	model VARCHAR(255),
+	priority PRIORITY NOT NULL,
 	software_version VARCHAR(255),
 	status STATUS NOT NULL,
 	last_seen TIMESTAMP NOT NULL
@@ -121,6 +123,7 @@ ADD CONSTRAINT fk_ds_devices
 CREATE INDEX idx_devices_hostname ON devices(hostname);
 CREATE INDEX idx_devices_ip ON devices(ip_address);
 CREATE INDEX idx_devices_status ON devices(status);
+CREATE INDEX idx_devices_priority ON devices(priority);
 CREATE INDEX idx_interfaces_device_id ON interfaces(device_id);
 CREATE INDEX idx_snapshots_device_id ON device_snapshots(device_id);
 CREATE INDEX idx_snapshots_timestamp ON device_snapshots(timestamp);
