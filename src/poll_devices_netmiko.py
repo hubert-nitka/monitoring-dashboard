@@ -3,18 +3,27 @@ Module contains function to poll information from network devices using netmiko
 """
 
 from netmiko import ConnectHandler
+from typing import Any, overload
+from config import CISCO_LOGIN, CISCO_PASSWORD
 
+def get_interfaces_status(devices: dict[str, Any] | list[dict[str, Any]]):
+    if isinstance(devices, dict):
+        devices = [devices]
 
-"""connection = ConnectHandler(
-    host = "192.168.69.1",
-    username = "cisco",
-    password = "cisco",
-    device_type = "cisco_ios"
-)
+    results = []
 
-output = connection.send_command("sh mac add")
+    for device in devices:
+        if device['device_vendor'] == 'cisco':
+            connection = ConnectHandler(
+                device_type='cisco_ios',
+                host=device['ip_address'],
+                username=CISCO_LOGIN,
+                password=CISCO_PASSWORD
+            )  
 
-print(output)
+            output = connection.send_command('show ip interface brief')
 
-connection.disconnect()"""
-
+            results.append({
+                'hostname': device['hostname'],
+                
+                })

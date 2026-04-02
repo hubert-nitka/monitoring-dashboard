@@ -3,7 +3,7 @@ Helper functions used by other modules
 """
 from datetime import datetime, timezone
 from sqlalchemy import create_engine
-from config import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT
+from config import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT, LOG_PATH
 
 def log(message, level="INFO", echo=False):
     """
