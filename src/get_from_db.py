@@ -42,8 +42,10 @@ def _get_devices(condition: str, params: dict[str, Any], many: bool):
 
     if not data:
         raise ValueError("No devices found")
-    
-    return data
+    if many:
+        return [dict(row) for row in data]
+    else:
+        return dict(data)
 
 def get_device_by_ip(ip_address: str) -> dict[str, Any]:
     """
