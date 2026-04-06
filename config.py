@@ -1,8 +1,14 @@
+"""
+Local/secret variables
+"""
+
 import os
 from dotenv import load_dotenv
-
+from pathlib import Path
 
 load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # DB config
 
@@ -18,3 +24,7 @@ CISCO_LOGIN = os.getenv('CISCO_LOGIN')
 CISCO_PASSWORD = os.getenv('CISCO_PASSWORD')
 UBUNTU_SERVER_LOGIN = os.getenv('UBUNTU_SERVER_LOGIN')
 UBUNTU_SERVER_PASSWORD = os.getenv("UBUNTU_SERVER_PASSWORD")
+
+# File paths
+
+LOG_PATH = Path(os.getenv('LOG_PATH', str(BASE_DIR / "./log/log.log")))
