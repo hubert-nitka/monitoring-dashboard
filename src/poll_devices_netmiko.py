@@ -39,7 +39,9 @@ def get_interfaces_details(devices: dict[str, Any] | list[dict[str, Any]]) -> li
 
                     results.append({
                         'hostname': device['hostname'],
-                        'output': output
+                        'device_id': device['id'],
+                        'device_vendor': device['device_vendor'],
+                        'interfaces': output
                     })
 
                     break
@@ -53,12 +55,26 @@ def get_interfaces_details(devices: dict[str, Any] | list[dict[str, Any]]) -> li
                     )
 
                     interfaces_details = json.loads(connection.send_command('ip -j a'))
-                    interfaces_counters = json.loads(connection.send_command('ip -s -j link'))
+                    interfaces_counters = json.loads(connection.send_command('ip -s -d -j link'))
+
+                    counters_map = {interface["ifname"]: interface for interface in interfaces_counters}
+
+                    merged = []
+
+                    for interface in interfaces_details:
+                        name = interface["ifname"]
+
+                        combined = interface.copy()
+                        if name in counters_map:
+                            combined.update(counters_map[name])
+
+                        merged.append(combined)
 
                     results.append({
                         'hostname': device['hostname'],
-                        'interface_details': interfaces_details,
-                        'interface_counters': interfaces_counters
+                        'device_id': device['id'],
+                        'device_vendor': device['device_vendor'],
+                        'interfaces': merged
                     })
 
                     break
@@ -111,6 +127,8 @@ def get_device_facts(devices: dict[str, Any] | list[dict, Any]) -> list[dict[str
 
                     results.append({
                         'hostname': device['hostname'],
+                        'device_id': device['id'],
+                        'device_vendor': device['device_vendor'],
                         'output': output
                     })
 
@@ -128,6 +146,8 @@ def get_device_facts(devices: dict[str, Any] | list[dict, Any]) -> list[dict[str
 
                     results.append({
                         'hostname': device['hostname'],
+                        'device_id': device['id'],
+                        'device_vendor': device['device_vendor'],
                         'output': output
                     })
 
@@ -183,6 +203,8 @@ def get_cdp_neighbors(devices: dict[str, Any] | list[dict, Any]) -> list[dict[st
 
                 results.append({
                     'hostname': device['hostname'],
+                    'device_id': device['id'],
+                    'device_vendor': device['device_vendor'],
                     'output': output
                 })
 

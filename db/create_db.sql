@@ -42,14 +42,14 @@ CREATE TABLE interfaces (
 	name VARCHAR(255) NOT NULL,
 	ip_address INET,
 	description VARCHAR(255),
-	admin_status VARCHAR(50) NOT NULL,
-	oper_status VARCHAR(50) NOT NULL,
+	admin_status VARCHAR(50),
+	oper_status VARCHAR(50),
 	in_pkt BIGINT,
 	out_pkt BIGINT,
 	in_errors INTEGER,
 	out_errors INTEGER,
 	out_drops INTEGER,
-	last_updated TIMESTAMP NOT NULL
+	last_updated TIMESTAMP
 );
 
 CREATE TABLE interface_history (

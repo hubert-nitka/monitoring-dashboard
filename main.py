@@ -1,6 +1,7 @@
 import streamlit as st
 from src.get_from_db import get_device_by_ip, get_devices_by_vendor
 from src.poll_devices_netmiko import get_interfaces_details, get_device_facts, get_cdp_neighbors
+from src.update_db import update_device_status
 from pprint import pprint
 
 def main():
@@ -11,7 +12,7 @@ def main():
 
     devices = get_devices_by_vendor('cisco')
     device = get_device_by_ip('192.168.68.1')
-    output = get_device_facts(device)
+    output = get_interfaces_details(device)
     pprint(output)
 
 
