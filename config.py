@@ -28,3 +28,4 @@ UBUNTU_SERVER_PASSWORD = os.getenv("UBUNTU_SERVER_PASSWORD")
 # File paths
 
 LOG_PATH = Path(os.getenv('LOG_PATH', str(BASE_DIR / "./log/log.log")))
+INVENTORY_PATH = Path(os.getenv('INVENTORY_PATH', str(BASE_DIR / "./data/inventory.yml")))

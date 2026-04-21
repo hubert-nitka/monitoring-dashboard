@@ -33,7 +33,7 @@ def get_or_create_interface(engine, device_id: int, interface: str) -> int:
 
             if existing_id:
                 return existing_id
-            
+
             result = conn.execute(
                 text(
                     """
@@ -47,7 +47,7 @@ def get_or_create_interface(engine, device_id: int, interface: str) -> int:
                     'status': None
                 }
             )
-            
+
             return result.scalar()
 
     except Exception as e:
@@ -73,11 +73,11 @@ def get_interface_status(interface_id: int) -> str:
                     'interface_id': interface_id
                 }
             )
+            return result.scalar()
     except Exception as e:
         raise RuntimeError("Database error while fetching interface status") from e
     finally:
-        engine.dispose
-    return result.scalar()
+        engine.dispose()
 
 #####################
 ### MID FUNCTIONS ###
@@ -121,25 +121,12 @@ def update_device_status(device_id: int, status: str):
 
     try:
         with engine.begin() as conn:
-            if status.lower() == "offline":
                 conn.execute(
                     text(
                         """
                         UPDATE devices
                         SET status = :status
-                        WHERE id = :device_id;
-                        """
-                    ),{
-                        'status': status,
-                        'device_id': device_id
-                    }
-                )
-            if status.lower() == "online":
-                conn.execute(
-                    text(
-                        """
-                        UPDATE devices
-                        SET status = :status, last_seen = current_timestamp
+                            last_seen = CASE WHEN :status = 'online' THEN current_timestamp ELSE last_seen END
                         WHERE id = :device_id;
                         """
                     ),{
@@ -189,7 +176,7 @@ def update_interfaces(device_id: int, device_vendor: str, interfaces: dict[str, 
                     )
                     if old_status != interface['protocol_status']:
                         save_interface_history(interface_id, old_status, interface['protocol_status'])
-                if device_vendor.lower() == 'linux': 
+                if device_vendor.lower() == 'linux':
                     interface_id = get_or_create_interface(engine, device_id, interface['ifname'])
                     old_status = get_interface_status(interface_id)
                     ip_address = next(

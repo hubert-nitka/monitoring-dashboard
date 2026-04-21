@@ -5,11 +5,14 @@ Functions to get data from DB
 from sqlalchemy import text
 from src.utils import connect_to_database
 from typing import Any, overload
+from config import INVENTORY_PATH
+from pathlib import Path
+import yaml
 
 BASE_DEVICE_SELECT_QUERY = """
     SELECT d.id, d.hostname, d.ip_address, d.serial_number, dt.name AS device_type, v.name AS device_vendor, d.model, d.software_version, d.status, d.priority
     FROM devices d
-    JOIN device_types dt 
+    JOIN device_types dt
     ON d.type_id = dt.id
     JOIN vendors v
     ON d.vendor_id = v.id
@@ -66,3 +69,21 @@ def get_devices_by_vendor(vendor: str) -> list[dict[str,Any]]:
         params={"vendor": vendor.lower()},
         many=True
     )
+
+def get_inventory_from_db_to_yaml():
+    """
+    Get all devices from DB and save them to yaml file
+    """
+
+    result = _get_devices(
+        condition="1=1",
+        params={},
+        many=True
+    )
+
+    INVENTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    with INVENTORY_PATH.open("w") as f:
+        yaml.dump(result, f)
+
+    return result
