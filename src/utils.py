@@ -28,3 +28,6 @@ def connect_to_database():
     )
     engine = create_engine(connection_string)
     return engine
+
+def to_int(value):
+    return int(value) if value not in (None, '') else None

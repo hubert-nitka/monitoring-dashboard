@@ -129,7 +129,7 @@ def get_device_facts(devices: dict[str, Any] | list[dict, Any]) -> list[dict[str
                         'hostname': device['hostname'],
                         'device_id': device['id'],
                         'device_vendor': device['device_vendor'],
-                        'output': output
+                        'facts': output
                     })
 
                     break
@@ -148,7 +148,7 @@ def get_device_facts(devices: dict[str, Any] | list[dict, Any]) -> list[dict[str
                         'hostname': device['hostname'],
                         'device_id': device['id'],
                         'device_vendor': device['device_vendor'],
-                        'output': output
+                        'facts': output
                     })
 
                     break
