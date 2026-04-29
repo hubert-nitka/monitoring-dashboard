@@ -1,0 +1,174 @@
+ISP1#sh run
+Building configuration...
+
+  
+Current configuration : 4154 bytes
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname ISP1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no logging console
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip domain name lab.isp
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+username cisco privilege 15 secret 9 $9$96xMCOTCHsCGjP$nFrv3koQ/j/goqhY9LAlbsLJ9w4WnQOdSheBDhuvJHE
+!         
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.0.1 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description ISP2 - 10.0.0.0/30
+ ip address 10.0.0.1 255.255.255.252
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description ISP3 - 10.0.0.4/30
+ ip address 10.0.0.5 255.255.255.252
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ description MGMT - 192.168.18.0/30
+ ip address 192.168.18.23 255.255.254.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router ospf 1
+ router-id 1.1.1.1
+ redistribute static subnets
+ network 10.0.0.0 0.0.0.3 area 0
+ network 10.0.0.4 0.0.0.3 area 0
+ network 10.1.0.1 0.0.0.0 area 0
+!
+router bgp 65000
+ bgp log-neighbor-changes
+ network 192.168.18.0 mask 255.255.254.0
+ network 192.168.18.7 mask 255.255.255.255
+ neighbor 10.1.0.2 remote-as 65000
+ neighbor 10.1.0.2 update-source Loopback0
+ neighbor 10.1.0.2 route-reflector-client
+ neighbor 10.1.0.2 next-hop-self
+ neighbor 10.1.0.3 remote-as 65000
+ neighbor 10.1.0.3 update-source Loopback0
+ neighbor 10.1.0.3 route-reflector-client
+ neighbor 10.1.0.4 remote-as 65000
+ neighbor 10.1.0.4 update-source Loopback0
+ neighbor 10.1.0.4 route-reflector-client
+ neighbor 10.1.0.4 next-hop-self
+ neighbor 10.1.0.5 remote-as 65000
+ neighbor 10.1.0.5 update-source Loopback0
+ neighbor 10.1.0.5 route-reflector-client
+ neighbor 10.1.0.5 next-hop-self
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 192.168.18.7 255.255.255.255 GigabitEthernet0/3
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+no scheduler allocate
+!
+end
