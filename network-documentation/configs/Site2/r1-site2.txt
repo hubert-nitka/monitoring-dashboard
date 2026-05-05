@@ -1,0 +1,38 @@
+Juniper@r-site2> show configuration | display set 
+set version 24.2R1-S2.5
+set system host-name r-site2
+set system root-authentication encrypted-password "$6$ttzFXpT3$.ksnHbRB/VXYjAIIkVKdjVdOqIenydAu9d7D391ONrIaBbPa78T8vSc3e9clz6aNK7PufmhGO8s79fL3Ly8BE1"
+set system login user Juniper uid 2000
+set system login user Juniper class super-user
+set system login user Juniper authentication encrypted-password "$6$wUUpTWPq$Huy/DZrGSA0klpWgjriaVOrijd3YMqGg/TeJutcYFqYaeBX8bDpKIpNCo6tQXmGzL7ENLVXuwlpE01Nc4wsdO1"
+set system services ssh
+set system syslog file interactive-commands interactive-commands any
+set system syslog file messages any notice
+set system syslog file messages authorization info
+set system processes dhcp-service traceoptions file dhcp_logfile
+set system processes dhcp-service traceoptions file size 10m
+set system processes dhcp-service traceoptions level all
+set system processes dhcp-service traceoptions flag packet
+set interfaces ge-0/0/0 description ISP3
+set interfaces ge-0/0/0 unit 0 family inet address 10.0.2.2/30
+set interfaces ge-0/0/1 description s-site2-sw1
+set interfaces ge-0/0/1 unit 0 family bridge interface-mode trunk
+set interfaces ge-0/0/1 unit 0 family bridge vlan-id-list 1-200
+set interfaces fxp0 unit 0 family inet dhcp vendor-id Juniper-vmx-VM69FA10438F
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-type stateful
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-ia-type ia-na
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-identifier duid-type duid-ll
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client vendor-id Juniper:vmx:VM69FA10438F
+set interfaces irb unit 99 family inet address 192.168.2.1/24
+set policy-options policy-statement EXPORT-BGP term ADV-192.168.2.0/24 from route-filter 192.168.2.0/24 exact
+set policy-options policy-statement EXPORT-BGP term ADV-192.168.2.0/24 then accept
+set policy-options policy-statement EXPORT-BGP term REJECT-OTHERS then reject
+set routing-options autonomous-system 65002
+set protocols router-advertisement interface fxp0.0 managed-configuration
+set protocols bgp group AS65000 type external
+set protocols bgp group AS65000 export EXPORT-BGP
+set protocols bgp group AS65000 peer-as 65000
+set protocols bgp group AS65000 neighbor 10.0.2.1
+set protocols lldp interface all
+set bridge-domains mgmt-vlan vlan-id 99
+set bridge-domains mgmt-vlan routing-interface irb.99

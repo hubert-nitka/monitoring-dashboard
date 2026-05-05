@@ -1,0 +1,35 @@
+Juniper@s-site2-sw1> show configuration | display set 
+set version 24.4R1.9
+set system host-name s-site2-sw1
+set system root-authentication encrypted-password "$6$.DEKNg8G$S/WQKvHXIzvJ/ReEAOulLjjXTmJzlFa6CvgvltHMDF.D9nIXHusJWMVB3G/ugAefeH0zO0NWYOs0RvrTQYgCU."
+set system login user Juniper uid 2000
+set system login user Juniper class super-user
+set system login user Juniper authentication encrypted-password "$6$xpgYkS6c$Y2MayTyTxkLUn0zmgKp6a/Ud1xz0VwxLxTcH8h/M52Y6dO8Nhq7ZcyBKN8y3oPqecub9wIEfSGoJXKSntq0Wu0"
+set system services ssh key-exchange curve25519-sha256
+set system services ssh key-exchange dh-group14-sha1
+set system services ssh key-exchange group-exchange-sha2
+set system arp aging-timer 5
+set system syslog file interactive-commands interactive-commands any
+set system syslog file messages any notice
+set system syslog file messages authorization info
+set system processes dhcp-service traceoptions file dhcp_logfile
+set system processes dhcp-service traceoptions file size 10m
+set system processes dhcp-service traceoptions level all
+set system processes dhcp-service traceoptions flag packet
+set interfaces ge-0/0/0 description r-site2
+set interfaces ge-0/0/0 unit 0 family ethernet-switching interface-mode trunk
+set interfaces ge-0/0/0 unit 0 family ethernet-switching vlan members all
+set interfaces fxp0 unit 0 family inet dhcp vendor-id Juniper-ex9214-VM69FA1F1E5C
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-type stateful
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-ia-type ia-na
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-identifier duid-type duid-ll
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client vendor-id Juniper:ex9214:VM69FA1F1E5C
+set interfaces irb unit 99 description MGMT
+set interfaces irb unit 99 family inet address 192.168.2.2/24
+set multi-chassis mc-lag consistency-check
+set routing-options static route 0.0.0.0/0 next-hop 192.168.2.1
+set protocols router-advertisement interface fxp0.0 managed-configuration
+set protocols lldp interface all
+set protocols lldp-med interface all
+set vlans mgmt-vlan vlan-id 99
+set vlans mgmt-vlan l3-interface irb.99

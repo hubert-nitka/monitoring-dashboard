@@ -2,7 +2,9 @@ ISP3#sh run
 Building configuration...
 
   
-Current configuration : 3435 bytes
+Current configuration : 3622 bytes
+!
+! Last configuration change at 17:22:41 UTC Tue May 5 2026 by cisco
 !
 version 15.9
 service timestamps debug datetime msec
@@ -46,9 +48,10 @@ multilink bundle-name authenticated
 !
 !
 username cisco privilege 15 secret 9 $9$4dr6zbFKv8plx9$zqW1wWcEVnrXylobwSmsphF5.TDD51MO0wK3KbRtPZY
-!         
+!
 redundancy
 !
+lldp run
 !
 ! 
 !
@@ -81,15 +84,15 @@ interface GigabitEthernet0/1
  media-type rj45
 !
 interface GigabitEthernet0/2
- no ip address
- shutdown
+ description Site2 || r-site2
+ ip address 10.0.2.1 255.255.255.0
  duplex auto
  speed auto
  media-type rj45
 !
 interface GigabitEthernet0/3
  no ip address
- shutdown
+ shutdown 
  duplex auto
  speed auto
  media-type rj45
@@ -102,8 +105,10 @@ router ospf 1
 !
 router bgp 65000
  bgp log-neighbor-changes
+ neighbor 10.0.2.2 remote-as 65002
  neighbor 10.1.0.1 remote-as 65000
  neighbor 10.1.0.1 update-source Loopback0
+ neighbor 10.1.0.1 next-hop-self
 !
 ip forward-protocol nd
 !
@@ -115,7 +120,7 @@ ip ssh version 2
 ipv6 ioam timestamp
 !
 !
-!         
+!
 control-plane
 !
 banner exec ^C
