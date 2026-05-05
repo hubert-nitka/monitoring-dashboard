@@ -1,8 +1,10 @@
 """
 Helper functions used by other modules
 """
+import yaml
 from datetime import datetime, timezone
 from sqlalchemy import create_engine
+from typing import Any
 from config import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT, LOG_PATH
 
 def log(message, level="INFO", echo=False):
@@ -31,3 +33,11 @@ def connect_to_database():
 
 def to_int(value):
     return int(value) if value not in (None, '') else None
+
+def read_inventory_yaml(inventory_file: yaml) -> list[dict[str,Any]]:
+    """
+    Reads local yaml inventory file and returns list of dictionaries per device
+    """
+    with open(inventory_file, "r") as f:
+        inventory = yaml.load(f, Loader=yaml.FullLoader)
+    return inventory

@@ -1,7 +1,9 @@
 import streamlit as st
 from src.get_from_db import get_device_by_ip, get_devices_by_vendor, get_inventory_from_db_to_yaml
-from src.poll_devices_netmiko import get_interfaces_details, get_device_facts, get_cdp_neighbors
+from src.poll_devices_netmiko import get_device_facts, get_cdp_neighbors
 from src.update_db import update_device_status, update_interfaces, save_snapshot
+from src.utils import read_inventory_yaml
+from src.poll_devices_napalm import get_interfaces_details
 from pprint import pprint
 import os
 from config import INVENTORY_PATH
@@ -26,10 +28,10 @@ def main():
     print(devices)
     print(os.getcwd())"""
 
-    with INVENTORY_PATH.open("r") as f:
-        inventory = yaml.load(f, Loader=yaml.FullLoader)
+    inventory = read_inventory_yaml(INVENTORY_PATH)
 
-    print(inventory)
+    output = get_interfaces_details(inventory)
+    pprint(output)
 
 if __name__ == "__main__":
     main()

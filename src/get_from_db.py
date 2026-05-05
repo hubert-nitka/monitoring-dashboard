@@ -6,7 +6,6 @@ from sqlalchemy import text
 from src.utils import connect_to_database
 from typing import Any, overload
 from config import INVENTORY_PATH
-from pathlib import Path
 import yaml
 
 BASE_DEVICE_SELECT_QUERY = """
