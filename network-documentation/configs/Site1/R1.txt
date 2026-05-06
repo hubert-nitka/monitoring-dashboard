@@ -1,3 +1,11 @@
+R1#sh run
+Building configuration...
+
+  
+Current configuration : 4346 bytes
+!
+! Last configuration change at 17:05:14 UTC Wed May 6 2026 by cisco
+!
 version 15.9
 service timestamps debug datetime msec
 service timestamps log datetime msec
@@ -39,8 +47,8 @@ multilink bundle-name authenticated
 !
 !
 !
-username cisco privilege 15 secret cisco
-!         
+username cisco privilege 15 secret 9 $9$vf8luF4NWKzVzf$CLjc./YTMpnuluc8x8LtOG8l6ILy.QrW8dfzch/had6
+!
 redundancy
 !
 !
@@ -57,82 +65,84 @@ redundancy
 !
 !
 !
+interface Loopback0
+ ip address 10.0.11.1 255.255.255.255
+!
 interface GigabitEthernet0/0
- description LAN
- no ip address
+ description LAN[S1] - 10.0.1.8/31
+ ip address 10.0.1.8 255.255.255.254
+ ip ospf network point-to-point
  duplex auto
  speed auto
  media-type rj45
-!         
-interface GigabitEthernet0/0.20
- description HR
- encapsulation dot1Q 20
- ip address 192.168.70.125 255.255.255.128
- ip helper-address 192.168.68.1
- ip helper-address 192.168.68.2
- standby 20 ip 192.168.70.126
- standby 20 priority 110
- standby 20 preempt
-!
-interface GigabitEthernet0/0.40
- description Finance
- encapsulation dot1Q 40
- ip address 192.168.70.253 255.255.255.128
- ip helper-address 192.168.68.1
- ip helper-address 192.168.68.2
- standby 40 ip 192.168.70.254
- standby 40 priority 110
- standby 40 preempt
-!
-interface GigabitEthernet0/0.99
- description MGMT
- encapsulation dot1Q 99
- ip address 192.168.69.253 255.255.255.0
- standby 99 ip 192.168.69.254
- standby 99 priority 110
- standby 99 preempt
-!
-interface GigabitEthernet0/0.100
- description Servers
- encapsulation dot1Q 100
- ip address 192.168.68.253 255.255.255.0
- standby 100 ip 192.168.68.254
- standby 100 priority 110
- standby 100 preempt
 !
 interface GigabitEthernet0/1
- description WAN
- ip address 192.168.18.21 255.255.254.0
- standby 1 ip 192.168.18.23
- standby 1 priority 110
- standby 1 preempt
+ description WAN[ISP4] - 10.0.1.0/31
+ ip address 10.0.1.1 255.255.255.254
  duplex auto
  speed auto
  media-type rj45
-!         
+!
 interface GigabitEthernet0/2
- no ip address
- shutdown
+ description WAN[ISP5] - 10.0.1.4/31
+ ip address 10.0.1.5 255.255.255.254
  duplex auto
  speed auto
  media-type rj45
 !
 interface GigabitEthernet0/3
+ description LAN[S2] - 10.0.1.10/31
+ ip address 10.0.1.10 255.255.255.254
+ ip ospf network point-to-point
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/4
  no ip address
  shutdown
  duplex auto
  speed auto
  media-type rj45
+!
+router ospf 1
+ passive-interface default
+ no passive-interface GigabitEthernet0/0
+ no passive-interface GigabitEthernet0/3
+ network 10.0.1.8 0.0.0.1 area 0
+ network 10.0.1.10 0.0.0.1 area 0
+ network 10.0.11.1 0.0.0.0 area 0
+ default-information originate
+!
+router bgp 65001
+ bgp log-neighbor-changes
+ network 10.0.11.1 mask 255.255.255.255
+ network 192.168.68.0
+ network 192.168.69.0
+ network 192.168.70.0 mask 255.255.255.128
+ network 192.168.70.128 mask 255.255.255.128
+ neighbor 10.0.1.0 remote-as 65000
+ neighbor 10.0.1.0 route-map SET_LP_HIGH in
+ neighbor 10.0.1.4 remote-as 65000
+ neighbor 10.0.1.4 route-map PREPEND_OUT out
 !
 ip forward-protocol nd
 !
 !
 no ip http server
 no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.1.0
+ip route 0.0.0.0 0.0.0.0 10.0.1.4 200
 ip ssh version 2
 !
 ipv6 ioam timestamp
-!         
+!
+route-map PREPEND_OUT permit 10
+ set as-path prepend 65001 65001
+!
+route-map SET_LP_HIGH permit 10
+ set local-preference 200
+!
 !
 !
 control-plane

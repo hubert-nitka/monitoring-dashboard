@@ -2,7 +2,9 @@ ISP4#sh run
 Building configuration...
 
   
-Current configuration : 3557 bytes
+Current configuration : 3627 bytes
+!
+! Last configuration change at 14:50:06 UTC Wed May 6 2026 by cisco
 !
 version 15.9
 service timestamps debug datetime msec
@@ -46,7 +48,7 @@ multilink bundle-name authenticated
 !
 !
 username cisco privilege 15 secret 9 $9$ILX4jCt/Xg3Mj9$iR3wbWgc4tj57JOHxXrhdu012cAlNB3smunZnEFv0s2
-!         
+!
 redundancy
 !
 !
@@ -74,15 +76,15 @@ interface GigabitEthernet0/0
  media-type rj45
 !
 interface GigabitEthernet0/1
- description Site1[R1] - 10.0.1.0/30
- ip address 10.0.1.1 255.255.255.252
+ description Site1[R1] - 10.0.1.0/31
+ ip address 10.0.1.0 255.255.255.254
  duplex auto
  speed auto
  media-type rj45
 !
 interface GigabitEthernet0/2
- description Site1[R1] - 10.0.1.4/30
- ip address 10.0.1.5 255.255.255.252
+ description Site1[R2] - 10.0.1.2/31
+ ip address 10.0.1.2 255.255.255.254
  duplex auto
  speed auto
  media-type rj45
@@ -101,8 +103,8 @@ router ospf 1
 !
 router bgp 65000
  bgp log-neighbor-changes
- neighbor 10.0.1.2 remote-as 65001
- neighbor 10.0.1.6 remote-as 65001
+ neighbor 10.0.1.1 remote-as 65001
+ neighbor 10.0.1.3 remote-as 65001
  neighbor 10.1.0.1 remote-as 65000
  neighbor 10.1.0.1 update-source Loopback0
  neighbor 10.1.0.1 next-hop-self
@@ -113,9 +115,9 @@ ip forward-protocol nd
 no ip http server
 no ip http secure-server
 ip ssh version 2
-!
-ipv6 ioam timestamp
 !         
+ipv6 ioam timestamp
+!
 !
 !
 control-plane
